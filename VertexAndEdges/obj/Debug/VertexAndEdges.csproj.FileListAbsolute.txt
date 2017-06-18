@@ -1,0 +1,9 @@
+c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\bin\Debug\VertexAndEdges.exe.config
+c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\bin\Debug\VertexAndEdges.exe
+c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\bin\Debug\VertexAndEdges.pdb
+c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.csprojResolveAssemblyReference.cache
+c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.Properties.Resources.resources
+c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.csproj.GenerateResource.Cache
+c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.exe
+c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.pdb
+c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.VertexAndEdges.resources
