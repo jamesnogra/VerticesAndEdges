@@ -7,3 +7,12 @@ c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\Vertex
 c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.exe
 c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.pdb
 c:\users\james\documents\visual studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.VertexAndEdges.resources
+C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\bin\Debug\VertexAndEdges.exe.config
+C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\bin\Debug\VertexAndEdges.exe
+C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\bin\Debug\VertexAndEdges.pdb
+C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.csprojResolveAssemblyReference.cache
+C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.VertexAndEdges.resources
+C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.Properties.Resources.resources
+C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.csproj.GenerateResource.Cache
+C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.exe
+C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.pdb

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,7 +15,8 @@ namespace VertexAndEdges
 
     public partial class VertexAndEdges : Form
     {
-        private Vertex[] vertices = new Vertex[256];
+        private static int maxSize = 256;
+        private Vertex[] vertices = new Vertex[maxSize];
         private int lastIndex = 0;
         private string mainColor = "#000000";
 
@@ -55,10 +57,14 @@ namespace VertexAndEdges
         {
             fromVertexComboBox.Items.Clear();
             toVertexComboBox.Items.Clear();
+            startComboBox.Items.Clear();
+            endComboBox.Items.Clear();
             for (int x=0; x<=lastIndex;x++)
             {
                 fromVertexComboBox.Items.Add(x + 1);
                 toVertexComboBox.Items.Add(x + 1);
+                startComboBox.Items.Add(x + 1);
+                endComboBox.Items.Add(x + 1);
             }
         }
 
@@ -275,6 +281,67 @@ namespace VertexAndEdges
                     );
                 }
             }
+        }
+
+        private void dFSToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int startVertex = 1, endVertex = 1;
+            if (!Int32.TryParse(startComboBox.Text, out startVertex) || !Int32.TryParse(endComboBox.Text, out endVertex))
+            {
+                MessageBox.Show("Invalid vertex selected.");
+                return;
+            }
+            startVertex--;
+            endVertex--;
+            //MessageBox.Show("Travelling from "+startVertex+" to "+endVertex);
+
+            Stack tempVertices = new Stack();
+            List<int> finalPath = new List<int>();
+            List<int> visitedPaths = new List<int>();
+            tempVertices.Push(startVertex); //push first vertex
+            visitedPaths.Add(startVertex); //assume start vertex has been visited
+            MessageBox.Show("PUSH the start vertex " + (startVertex+1));
+            bool isDone = true;
+            int currentVertex;
+            while(isDone)
+            {
+                currentVertex = Int32.Parse(tempVertices.Pop().ToString());
+                MessageBox.Show("POP vertex " + (currentVertex + 1));
+                finalPath.Add(currentVertex);
+                if (currentVertex == endVertex)
+                {
+                    isDone = false;
+                }
+                vertices[currentVertex].neighbors.Sort(); //lets sort before pushing the neighbors to the stack
+                foreach (int vertex in vertices[currentVertex].neighbors)
+                {
+                    if (!checkIfListContains(visitedPaths, vertex))
+                    {
+                        tempVertices.Push(vertex);
+                        visitedPaths.Add(vertex);
+                        MessageBox.Show("PUSH neighbor " + (vertex + 1));
+                    }
+                }
+                if (tempVertices.Count == 0) //check if the stack is empty
+                {
+                    isDone = false;
+                }
+            }
+            //check if the endVertex is in the finalPath's list
+            if (checkIfListContains(finalPath, endVertex))
+            {
+                MessageBox.Show(printVertexList(finalPath));
+            }
+        }
+
+        public string printVertexList(List<int> tempList)
+        {
+            string tempString = "";
+            foreach (int x in tempList)
+            {
+                tempString += (x+1) + " ";
+            }
+            return tempString;
         }
     }
 
