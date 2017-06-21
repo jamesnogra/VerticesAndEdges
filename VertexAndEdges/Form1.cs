@@ -18,7 +18,7 @@ namespace VertexAndEdges
         private static int maxSize = 256;
         private Vertex[] vertices = new Vertex[maxSize];
         private int lastIndex = 0;
-        private string mainColor = "#000000";
+        const string mainColor = "#000000";
 
         public VertexAndEdges()
         {
@@ -42,7 +42,7 @@ namespace VertexAndEdges
             mouseX = me.X;
             mouseY = me.Y;
             //MessageBox.Show("X is " + this.mouseX + " and Y is " + this.mouseY);
-            drawVertexAndLabel((lastIndex+1).ToString(), mouseX, mouseY);
+            drawVertexAndLabel((lastIndex+1).ToString(), mouseX, mouseY, null);
             updateFromAndToVertexComboBox();
             saveToVertex(lastIndex, mouseX, mouseY);
         }
@@ -87,28 +87,39 @@ namespace VertexAndEdges
                     vertices[fromVertex - 1].mouseX,
                     vertices[fromVertex - 1].mouseY,
                     vertices[toVertex - 1].mouseX,
-                    vertices[toVertex - 1].mouseY
+                    vertices[toVertex - 1].mouseY,
+                    null
                 );
             }
         }
 
-        public void drawVertexAndLabel(string label, int posX, int posY)
+        public void drawVertexAndLabel(string label, int posX, int posY, string customColor)
         {
+            string vertexColor = mainColor;
+            if (customColor != null)
+            {
+                vertexColor = customColor;
+            }
             //draw the circle vertex
             Bitmap bmp = new Bitmap(mainPicBox.Width, mainPicBox.Height);
             Graphics g = mainPicBox.CreateGraphics();
-            Brush blackPen = new SolidBrush(ColorTranslator.FromHtml(mainColor));
+            Brush blackPen = new SolidBrush(ColorTranslator.FromHtml(vertexColor));
             Font myFont = new Font("Arial", 12);
             g.FillEllipse(blackPen, posX - 20, posY - 20, 40, 40);
             g.DrawString(label, myFont, Brushes.White, new Point(posX - 9, posY - 8));
         }
 
-        public void drawEdgeLineAndRelabel(string label1, string label2, int posX1, int posY1, int posX2, int posY2)
+        public void drawEdgeLineAndRelabel(string label1, string label2, int posX1, int posY1, int posX2, int posY2, string customColor)
         {
+            string lineColor = mainColor;
+            if (customColor != null)
+            {
+                lineColor = customColor;
+            }
             //then draw the line
             Bitmap bmp = new Bitmap(mainPicBox.Width, mainPicBox.Height);
             Graphics g = mainPicBox.CreateGraphics();
-            Pen blackPen = new Pen(ColorTranslator.FromHtml(mainColor), 3);
+            Pen blackPen = new Pen(ColorTranslator.FromHtml(lineColor), 3);
             g.DrawLine(blackPen, posX1, posY1, posX2, posY2);
 
             //draw the label again because the line might have overlapped it
@@ -268,7 +279,7 @@ namespace VertexAndEdges
             for (int x = 0; x < lastIndex; x++)
             {
                 //MessageBox.Show("Drawing vertex " + vertices[x].indexNumber.ToString());
-                drawVertexAndLabel((vertices[x].indexNumber+1).ToString(), vertices[x].mouseX, vertices[x].mouseY);
+                drawVertexAndLabel((vertices[x].indexNumber+1).ToString(), vertices[x].mouseX, vertices[x].mouseY, null);
                 foreach (int neighbor in vertices[x].neighbors)
                 {
                     drawEdgeLineAndRelabel(
@@ -277,7 +288,8 @@ namespace VertexAndEdges
                         vertices[x].mouseX,
                         vertices[x].mouseY,
                         vertices[neighbor].mouseX,
-                        vertices[neighbor].mouseY
+                        vertices[neighbor].mouseY,
+                        null
                     );
                 }
             }
@@ -295,22 +307,24 @@ namespace VertexAndEdges
             endVertex--;
             //MessageBox.Show("Travelling from "+startVertex+" to "+endVertex);
 
+            string tempLogs = "";
             Stack tempVertices = new Stack();
             List<int> finalPath = new List<int>();
             List<int> visitedPaths = new List<int>();
             tempVertices.Push(startVertex); //push first vertex
             visitedPaths.Add(startVertex); //assume start vertex has been visited
-            MessageBox.Show("PUSH the start vertex " + (startVertex+1));
+            tempLogs += "PUSH\t" + (startVertex + 1) + "\n";
             bool isDone = true;
             int currentVertex;
             while(isDone)
             {
                 currentVertex = Int32.Parse(tempVertices.Pop().ToString());
-                MessageBox.Show("POP vertex " + (currentVertex + 1));
+                tempLogs += "POP\t" + (currentVertex + 1) + "\n";
                 finalPath.Add(currentVertex);
                 if (currentVertex == endVertex)
                 {
                     isDone = false;
+                    break;
                 }
                 vertices[currentVertex].neighbors.Sort(); //lets sort before pushing the neighbors to the stack
                 foreach (int vertex in vertices[currentVertex].neighbors)
@@ -319,7 +333,7 @@ namespace VertexAndEdges
                     {
                         tempVertices.Push(vertex);
                         visitedPaths.Add(vertex);
-                        MessageBox.Show("PUSH neighbor " + (vertex + 1));
+                        tempLogs += "PUSH\t" + (vertex + 1) + "\n";
                     }
                 }
                 if (tempVertices.Count == 0) //check if the stack is empty
@@ -330,7 +344,152 @@ namespace VertexAndEdges
             //check if the endVertex is in the finalPath's list
             if (checkIfListContains(finalPath, endVertex))
             {
-                MessageBox.Show(printVertexList(finalPath));
+                //check if showing of logs is enabled
+                if (showLog.Checked)
+                {
+                    tempLogs += "\nPath: " + printVertexList(finalPath);
+                    MessageBox.Show(tempLogs);
+                }
+                else
+                {
+                    MessageBox.Show("Path: " + printVertexList(finalPath));
+                }
+                int speed = 0;
+                if (animate.Checked)
+                {
+                    speed = 1000;
+                }
+                traverseFinalPath(finalPath, speed, "#33CC33");
+                System.Threading.Thread.Sleep(2000);
+                traverseFinalPath(finalPath, 0, mainColor); //reset graph
+            }
+            
+        }
+
+        private void bFSToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int startVertex = 1, endVertex = 1;
+            if (!Int32.TryParse(startComboBox.Text, out startVertex) || !Int32.TryParse(endComboBox.Text, out endVertex))
+            {
+                MessageBox.Show("Invalid vertex selected.");
+                return;
+            }
+            startVertex--;
+            endVertex--;
+            //MessageBox.Show("Travelling from "+startVertex+" to "+endVertex);
+
+            string tempLogs = "";
+            Queue tempVertices = new Queue();
+            List<int> finalPath = new List<int>();
+            List<int> visitedPaths = new List<int>();
+            tempVertices.Enqueue(startVertex); //push first vertex
+            visitedPaths.Add(startVertex); //assume start vertex has been visited
+            tempLogs += "PUSH\t" + (startVertex + 1) + "\n";
+            bool isDone = true;
+            int currentVertex;
+            while (isDone)
+            {
+                currentVertex = Int32.Parse(tempVertices.Dequeue().ToString());
+                tempLogs += "POP\t" + (currentVertex + 1) + "\n";
+                finalPath.Add(currentVertex);
+                if (currentVertex == endVertex)
+                {
+                    isDone = false;
+                    break;
+                }
+                vertices[currentVertex].neighbors.Sort(); //lets sort before pushing the neighbors to the stack
+                foreach (int vertex in vertices[currentVertex].neighbors)
+                {
+                    if (!checkIfListContains(visitedPaths, vertex))
+                    {
+                        tempVertices.Enqueue(vertex);
+                        visitedPaths.Add(vertex);
+                        tempLogs += "PUSH\t" + (vertex + 1) + "\n";
+                    }
+                }
+                if (tempVertices.Count == 0) //check if the stack is empty
+                {
+                    isDone = false;
+                }
+            }
+            //check if the endVertex is in the finalPath's list
+            if (checkIfListContains(finalPath, endVertex))
+            {
+                //check if showing of logs is enabled
+                if (showLog.Checked)
+                {
+                    tempLogs += "\nPath: " + printVertexList(finalPath);
+                    MessageBox.Show(tempLogs);
+                }
+                else
+                {
+                    MessageBox.Show("Path: " + printVertexList(finalPath));
+                }
+                int speed = 0;
+                if (animate.Checked)
+                {
+                    speed = 1000;
+                }
+                traverseFinalPath(finalPath, speed, "#33CC33");
+                System.Threading.Thread.Sleep(2000);
+                traverseFinalPath(finalPath, 0, mainColor); //reset graph
+            }
+        }
+
+        public void traverseFinalPath(List<int> tempList, int speed, string customColor)
+        {
+            //MessageBox.Show("Path Received: " + printVertexList(tempList));
+            for (int x=0; x<tempList.Count; x++)
+            {
+                //MessageBox.Show("At index " + vertices[tempList[x]].indexNumber + " then added with 1 so " + (vertices[tempList[x]].indexNumber + 1).ToString());
+                drawVertexAndLabel(
+                    (vertices[tempList[x]].indexNumber + 1).ToString(),
+                    vertices[tempList[x]].mouseX,
+                    vertices[tempList[x]].mouseY,
+                    customColor
+                );
+                System.Threading.Thread.Sleep(speed);
+                //MessageBox.Show(vertices[tempList[x]].indexNumber+" Drawing from " + (vertices[tempList[x]].indexNumber+1) + " to " + (vertices[tempList[x]].indexNumber + 2));
+                //MessageBox.Show("At x="+x+" and vertex "+ (vertices[tempList[x]].indexNumber + 1));
+                if (x<tempList.Count-1)
+                {
+                    //only draw an animated edge if the two vertices are neighbors
+                    if (checkIfListContains(vertices[tempList[x]].neighbors, vertices[tempList[x + 1]].indexNumber))
+                    {
+                        drawEdgeLineAndRelabel(
+                            (vertices[tempList[x]].indexNumber + 1).ToString(),
+                            (vertices[tempList[x + 1]].indexNumber + 1).ToString(),
+                            vertices[tempList[x]].mouseX,
+                            vertices[tempList[x]].mouseY,
+                            vertices[tempList[x + 1]].mouseX,
+                            vertices[tempList[x + 1]].mouseY,
+                            customColor
+                        );
+                    }
+                    else
+                    {
+                        int y = x+1; //we are adding +1 here because the next vertex is not it's neighbor
+                        while (y >= 0)
+                        {
+                            y--;
+                            if (checkIfListContains(vertices[tempList[x+1]].neighbors, (vertices[tempList[y]].indexNumber)))
+                            {
+                                drawEdgeLineAndRelabel(
+                                    (vertices[tempList[x+1]].indexNumber + 1).ToString(),
+                                    (vertices[tempList[y]].indexNumber + 1).ToString(),
+                                    vertices[tempList[x+1]].mouseX,
+                                    vertices[tempList[x+1]].mouseY,
+                                    vertices[tempList[y]].mouseX,
+                                    vertices[tempList[y]].mouseY,
+                                    customColor
+                                );
+                                //MessageBox.Show("Backtrack connecting " + (vertices[tempList[x+1]].indexNumber+1) + " and " + (vertices[tempList[y]].indexNumber+1) + " at x="+x+" and y="+y);
+                                break;
+                            }
+                        }
+                    }
+                }                
+                System.Threading.Thread.Sleep(speed);
             }
         }
 
@@ -343,6 +502,7 @@ namespace VertexAndEdges
             }
             return tempString;
         }
+
     }
 
     public class Vertex

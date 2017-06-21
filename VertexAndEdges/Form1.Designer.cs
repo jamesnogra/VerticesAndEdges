@@ -46,6 +46,8 @@
             this.showAdjacencyMatrixButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.animate = new System.Windows.Forms.CheckBox();
+            this.showLog = new System.Windows.Forms.CheckBox();
             this.endComboBox = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.startComboBox = new System.Windows.Forms.ComboBox();
@@ -112,6 +114,7 @@
             this.bFSToolStripMenuItem.Name = "bFSToolStripMenuItem";
             this.bFSToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.bFSToolStripMenuItem.Text = "Breadth-First Search";
+            this.bFSToolStripMenuItem.Click += new System.EventHandler(this.bFSToolStripMenuItem_Click);
             // 
             // dFSToolStripMenuItem
             // 
@@ -207,16 +210,38 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.animate);
+            this.groupBox2.Controls.Add(this.showLog);
             this.groupBox2.Controls.Add(this.endComboBox);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.startComboBox);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Location = new System.Drawing.Point(709, 203);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(163, 78);
+            this.groupBox2.Size = new System.Drawing.Size(163, 123);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Traversal";
+            // 
+            // animate
+            // 
+            this.animate.AutoSize = true;
+            this.animate.Location = new System.Drawing.Point(12, 98);
+            this.animate.Name = "animate";
+            this.animate.Size = new System.Drawing.Size(64, 17);
+            this.animate.TabIndex = 5;
+            this.animate.Text = "Animate";
+            this.animate.UseVisualStyleBackColor = true;
+            // 
+            // showLog
+            // 
+            this.showLog.AutoSize = true;
+            this.showLog.Location = new System.Drawing.Point(12, 75);
+            this.showLog.Name = "showLog";
+            this.showLog.Size = new System.Drawing.Size(74, 17);
+            this.showLog.TabIndex = 4;
+            this.showLog.Text = "Show Log";
+            this.showLog.UseVisualStyleBackColor = true;
             // 
             // endComboBox
             // 
@@ -306,6 +331,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox startComboBox;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox showLog;
+        private System.Windows.Forms.CheckBox animate;
     }
 }
 
