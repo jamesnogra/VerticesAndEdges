@@ -273,8 +273,8 @@ namespace VertexAndEdges
             //clear the picturebox
             Bitmap bmp = new Bitmap(mainPicBox.Width, mainPicBox.Height);
             Graphics g = mainPicBox.CreateGraphics();
-            Brush blackPen = new SolidBrush(ColorTranslator.FromHtml("#FFFFFF"));
-            g.FillRectangle(blackPen, 0, 0, mainPicBox.Width, mainPicBox.Height);
+            Brush whitePen = new SolidBrush(ColorTranslator.FromHtml("#FFFFFF"));
+            g.FillRectangle(whitePen, 0, 0, mainPicBox.Width, mainPicBox.Height);
             //then lets draw the vertices and edges
             for (int x = 0; x < lastIndex; x++)
             {
@@ -503,6 +503,13 @@ namespace VertexAndEdges
             return tempString;
         }
 
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Bitmap bmp = new Bitmap(mainPicBox.Width, mainPicBox.Height);
+            Graphics g = mainPicBox.CreateGraphics();
+            Brush whitePen = new SolidBrush(ColorTranslator.FromHtml("#FFFFFF"));
+            g.FillRectangle(whitePen, 0, 0, mainPicBox.Width, mainPicBox.Height);
+        }
     }
 
     public class Vertex
