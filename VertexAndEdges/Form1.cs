@@ -357,7 +357,7 @@ namespace VertexAndEdges
                 int speed = 0;
                 if (animate.Checked)
                 {
-                    speed = 1000;
+                    speed = 500;
                 }
                 traverseFinalPath(finalPath, speed, "#33CC33");
                 System.Threading.Thread.Sleep(2000);
@@ -505,6 +505,7 @@ namespace VertexAndEdges
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            lastIndex = 0;
             Bitmap bmp = new Bitmap(mainPicBox.Width, mainPicBox.Height);
             Graphics g = mainPicBox.CreateGraphics();
             Brush whitePen = new SolidBrush(ColorTranslator.FromHtml("#FFFFFF"));
