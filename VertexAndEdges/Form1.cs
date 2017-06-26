@@ -126,6 +126,31 @@ namespace VertexAndEdges
             Font myFont = new Font("Arial", 12);
             g.DrawString(label1, myFont, Brushes.White, new Point(posX1 - 9, posY1 - 8));
             g.DrawString(label2, myFont, Brushes.White, new Point(posX2 - 9, posY2 - 8));
+
+            //draw the length of the edge
+            myFont = new Font("Arial", 10);
+            g.DrawString(
+                calculateEdgeLength(posX1, posY1, posX2, posY2).ToString(),
+                myFont,
+                Brushes.Red,
+                new Point(calculateMiddlePoint(posX1, posX2), calculateMiddlePoint(posY1, posY2))
+            );
+        }
+
+        private int calculateEdgeLength(int posX1, int posY1, int posX2, int posY2)
+        {
+            int tempRes;
+            tempRes = (int)(Math.Sqrt(Math.Pow((posX2 - posX1), 2) + Math.Pow((posY2 - posY1), 2)));
+            return tempRes;
+        }
+
+        private int calculateMiddlePoint(int a, int b)
+        {
+            if (a < b)
+            {
+                return ((b - a) / 2) + a;
+            }
+            return (a - b) / 2 + b;
         }
 
         private bool updateNeighbors(int fromVertex, int toVertex)
