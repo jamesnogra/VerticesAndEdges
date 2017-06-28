@@ -388,7 +388,11 @@ namespace VertexAndEdges
                 System.Threading.Thread.Sleep(2000);
                 traverseFinalPath(finalPath, 0, mainColor); //reset graph
             }
-            
+            else
+            {
+                MessageBox.Show("No path found.");
+            }
+
         }
 
         private void bFSToolStripMenuItem_Click(object sender, EventArgs e)
@@ -453,12 +457,136 @@ namespace VertexAndEdges
                 int speed = 0;
                 if (animate.Checked)
                 {
-                    speed = 1000;
+                    speed = 500;
                 }
                 traverseFinalPath(finalPath, speed, "#33CC33");
                 System.Threading.Thread.Sleep(2000);
                 traverseFinalPath(finalPath, 0, mainColor); //reset graph
             }
+            else
+            {
+                MessageBox.Show("No path found.");
+            }
+        }
+
+        private void greedyBFSToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int startVertex = 1, endVertex = 1;
+            if (!Int32.TryParse(startComboBox.Text, out startVertex) || !Int32.TryParse(endComboBox.Text, out endVertex))
+            {
+                MessageBox.Show("Invalid vertex selected.");
+                return;
+            }
+            startVertex--;
+            endVertex--;
+
+            List<int> finalPath = new List<int>();
+            List<int> vertexPushed = new List<int>();
+            bool isDone = false;
+            int atVertex;
+            string tempLogs = "";
+
+            //push the start vertex
+            vertexPushed.Add(startVertex);
+            while (!isDone)
+            {
+                //remove the last item in the list of vertexPushed because it's the shortest
+                atVertex = vertexPushed.ElementAt(vertexPushed.Count - 1);
+                tempLogs += "\nRemoved and added to FinalPath vertex " + (atVertex + 1);
+                if (!checkIfListContains(finalPath, atVertex))
+                {
+                    finalPath.Add(atVertex);
+                }
+                vertexPushed.Remove(vertexPushed.Last());
+                //MessageBox.Show("REMOVE " + (atVertex + 1) + "\n\n"+printVertexList(vertexPushed) + "\n\nRemoving at Index: " + (vertexPushed.Count - 1));
+
+                //check if the removed vertex is the goal vertex
+                if (atVertex == endVertex)
+                {
+                    isDone = true;
+                    //MessageBox.Show("Final Path is: " + printVertexList(finalPath));
+                    break;
+                }
+
+                //add the neighbors of this vertex to vertexPushed
+                foreach (int vertex in vertices[atVertex].neighbors)
+                {
+                    if (!checkIfListContains(vertexPushed, vertex) && !checkIfListContains(finalPath,vertex))
+                    {
+                        //MessageBox.Show("ADDING: " + (vertex+1));
+                        tempLogs += "\nAdding vertex " + (vertex + 1);
+                        vertexPushed.Add(vertex);
+                    }
+                }
+                
+                //rearrange the list of vertices pushed according to the distance from goal
+                //the first element should have the longest direct distance to goal
+                //while the last element will have the shortest direct distance to goal
+                vertexPushed = sortListOfVerticesToGoal(vertexPushed, endVertex);
+                tempLogs += "\nSorting vertices.";
+                //MessageBox.Show("After: " + printVertexList(vertexPushed));
+
+                if (vertexPushed.Count == 0)
+                {
+                    isDone = true;
+                }
+            }
+
+            //let's check if we found the goal
+            if (checkIfListContains(finalPath, endVertex))
+            {
+                //check if showing of logs is enabled
+                if (showLog.Checked)
+                {
+                    tempLogs += "\nPath: " + printVertexList(finalPath);
+                    MessageBox.Show(tempLogs);
+                }
+                else
+                {
+                    MessageBox.Show("Path: " + printVertexList(finalPath));
+                }
+                int speed = 0;
+                if (animate.Checked)
+                {
+                    speed = 500;
+                }
+                traverseFinalPath(finalPath, speed, "#33CC33");
+                System.Threading.Thread.Sleep(2000);
+                traverseFinalPath(finalPath, 0, mainColor); //reset graph
+            }
+            else
+            {
+                MessageBox.Show("No path found.");
+            }
+
+        }
+
+        public List<int> sortListOfVerticesToGoal(List<int> theList, int goalVertex)
+        {
+            List<int> sortedList = theList;
+            int length1, length2;
+            int tempVertex;
+            for (int x=0; x< sortedList.Count; x++)
+            {
+                for (int y=0; y< sortedList.Count; y++)
+                {
+                    length1 = calculateEdgeLength(vertices[sortedList[x]].mouseX,
+                                                  vertices[sortedList[x]].mouseY,
+                                                  vertices[goalVertex].mouseX,
+                                                  vertices[goalVertex].mouseY);
+                    length2 = calculateEdgeLength(vertices[sortedList[y]].mouseX,
+                                                  vertices[sortedList[y]].mouseY,
+                                                  vertices[goalVertex].mouseX,
+                                                  vertices[goalVertex].mouseY);
+                    if (length2 < length1)
+                    {
+                        tempVertex = sortedList[y];
+                        sortedList[y] = theList[x];
+                        sortedList[x] = tempVertex;
+                    }
+                }
+            }
+            return sortedList;
         }
 
         public void traverseFinalPath(List<int> tempList, int speed, string customColor)
@@ -536,6 +664,7 @@ namespace VertexAndEdges
             Brush whitePen = new SolidBrush(ColorTranslator.FromHtml("#FFFFFF"));
             g.FillRectangle(whitePen, 0, 0, mainPicBox.Width, mainPicBox.Height);
         }
+
     }
 
     public class Vertex
@@ -543,6 +672,7 @@ namespace VertexAndEdges
         public int indexNumber;
         public int mouseX;
         public int mouseY;
+        public int distanceToGoal;
         public List<int> neighbors;
 
         public Vertex(int indexNumber, int mouseX, int mouseY)
@@ -550,6 +680,7 @@ namespace VertexAndEdges
             this.indexNumber = indexNumber;
             this.mouseX = mouseX;
             this.mouseY = mouseY;
+            this.distanceToGoal = int.MaxValue;
             neighbors = new List<int>();
         }
 
