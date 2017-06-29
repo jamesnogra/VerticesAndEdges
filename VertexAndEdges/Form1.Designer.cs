@@ -37,6 +37,9 @@
             this.blindSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bFSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dFSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.graphSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.greedyBFSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainPicBox = new System.Windows.Forms.PictureBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.connectVertexButton = new System.Windows.Forms.Button();
@@ -53,9 +56,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.startComboBox = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.graphSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.greedyBFSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicBox)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -135,6 +135,29 @@
             this.dFSToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dFSToolStripMenuItem.Text = "Depth-First Search";
             this.dFSToolStripMenuItem.Click += new System.EventHandler(this.dFSToolStripMenuItem_Click);
+            // 
+            // graphSearchToolStripMenuItem
+            // 
+            this.graphSearchToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aToolStripMenuItem,
+            this.greedyBFSToolStripMenuItem});
+            this.graphSearchToolStripMenuItem.Name = "graphSearchToolStripMenuItem";
+            this.graphSearchToolStripMenuItem.Size = new System.Drawing.Size(89, 20);
+            this.graphSearchToolStripMenuItem.Text = "Graph Search";
+            // 
+            // aToolStripMenuItem
+            // 
+            this.aToolStripMenuItem.Name = "aToolStripMenuItem";
+            this.aToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aToolStripMenuItem.Text = "A*";
+            this.aToolStripMenuItem.Click += new System.EventHandler(this.aToolStripMenuItem_Click);
+            // 
+            // greedyBFSToolStripMenuItem
+            // 
+            this.greedyBFSToolStripMenuItem.Name = "greedyBFSToolStripMenuItem";
+            this.greedyBFSToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.greedyBFSToolStripMenuItem.Text = "Greedy BFS";
+            this.greedyBFSToolStripMenuItem.Click += new System.EventHandler(this.greedyBFSToolStripMenuItem_Click);
             // 
             // mainPicBox
             // 
@@ -291,28 +314,6 @@
             this.label3.Size = new System.Drawing.Size(32, 13);
             this.label3.TabIndex = 0;
             this.label3.Text = "Start:";
-            // 
-            // graphSearchToolStripMenuItem
-            // 
-            this.graphSearchToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aToolStripMenuItem,
-            this.greedyBFSToolStripMenuItem});
-            this.graphSearchToolStripMenuItem.Name = "graphSearchToolStripMenuItem";
-            this.graphSearchToolStripMenuItem.Size = new System.Drawing.Size(89, 20);
-            this.graphSearchToolStripMenuItem.Text = "Graph Search";
-            // 
-            // aToolStripMenuItem
-            // 
-            this.aToolStripMenuItem.Name = "aToolStripMenuItem";
-            this.aToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.aToolStripMenuItem.Text = "A*";
-            // 
-            // greedyBFSToolStripMenuItem
-            // 
-            this.greedyBFSToolStripMenuItem.Name = "greedyBFSToolStripMenuItem";
-            this.greedyBFSToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.greedyBFSToolStripMenuItem.Text = "Greedy BFS";
-            this.greedyBFSToolStripMenuItem.Click += new System.EventHandler(this.greedyBFSToolStripMenuItem_Click);
             // 
             // VertexAndEdges
             // 

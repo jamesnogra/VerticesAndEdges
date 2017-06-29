@@ -561,23 +561,204 @@ namespace VertexAndEdges
 
         }
 
+        private void aToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int startVertex = 1, endVertex = 1;
+            if (!Int32.TryParse(startComboBox.Text, out startVertex) || !Int32.TryParse(endComboBox.Text, out endVertex))
+            {
+                MessageBox.Show("Invalid vertex selected.");
+                return;
+            }
+            startVertex--;
+            endVertex--;
+
+            List<AStarVertex> aStar = new List<AStarVertex>();
+            List<AStarVertex> tempAStar = new List<AStarVertex>();
+            List<int> finalPath = new List<int>();
+            AStarVertex tempVertex;
+            int tempTotalCost;
+            bool isDone = false;
+
+            aStar.Add(new AStarVertex(startVertex, -1, 0)); //add the start vertex
+
+            while (!isDone)
+            {
+                tempVertex = new AStarVertex(aStar.ElementAt(aStar.Count-1));
+                tempAStar.Add(tempVertex);
+                finalPath.Add(tempVertex.indexNumber);
+                aStar.Remove(aStar.Last()); //remove the vertex with the lowest cost
+                //MessageBox.Show("Removing: " + (tempVertex.indexNumber+1));
+                
+                if (tempVertex.indexNumber == endVertex) //check if current vertex is the goal
+                {
+                    isDone = true;
+                    break;
+                }
+
+                vertices[tempVertex.indexNumber].neighbors.Sort();
+                foreach (int vertex in vertices[tempVertex.indexNumber].neighbors)
+                {
+                    //MessageBox.Show("Adding: " + (vertex+1));
+                    tempTotalCost = calculateEdgeLength(
+                        vertices[vertex].mouseX,
+                        vertices[vertex].mouseY,
+                        vertices[tempVertex.indexNumber].mouseX, 
+                        vertices[tempVertex.indexNumber].mouseY
+                    );
+                    aStar.Add(new AStarVertex(vertex, tempVertex.indexNumber, tempTotalCost + tempVertex.totalCost));
+                }
+
+                //sort the list of vertices after adding
+                //starting from the longest to shortest (last element has the lowest goal cost)
+                aStar = sortListAStarVertex(aStar, endVertex);
+                //MessageBox.Show("Sorting");
+            }
+            //MessageBox.Show(printAStarVertexList(tempAStar));
+
+            //clean the final path for detours
+            /*finalPath = finalPath.Distinct().ToList<int>();
+            int at = finalPath.Count - 1;
+            while (at > 0)
+            {
+                if (!checkIfListContains(vertices[finalPath[at]].neighbors, vertices[finalPath[at-1]].indexNumber))
+                {
+                    //MessageBox.Show("Removed detour at vertex " + (vertices[finalPath[at - 1]].indexNumber + 1));
+                    finalPath.RemoveAt(at - 1);
+                }
+                at--;
+            }
+            finalPath = removeLongDetoursAStar(finalPath);*/
+            //get the clean path using parent
+            List<int> superFinalPath = new List<int>();
+            int at = tempAStar.Count - 1;
+            //add the indexNumber and parent of the last element of tempAStar
+            superFinalPath.Add(tempAStar[at].indexNumber);
+            while (at >= 0)
+            {
+                //MessageBox.Show("Adding vertex " + (tempAStar[at].indexNumber+1) + " and parent " + (tempAStar[at].parentVertex+1) + " at index " + at);
+                if (tempAStar[at].parentVertex != -1)
+                {
+                    superFinalPath.Add(tempAStar[at].parentVertex);
+                }
+                if (at == 0)
+                {
+                    break;
+                }
+                for (int y=0; y<tempAStar.Count; y++)
+                {
+                    if (tempAStar[y].indexNumber == tempAStar[at].parentVertex)
+                    {
+                        //MessageBox.Show("Changing x from " + at + " to " + y);
+                        at = y;
+                        y = tempAStar.Count; //end y loop
+                    }
+                }
+            }
+            superFinalPath.Reverse();
+            finalPath = superFinalPath;
+
+
+            //check if showing of logs is enabled
+            if (showLog.Checked)
+            {
+                MessageBox.Show(printAStarVertexList(tempAStar));
+            }
+            else
+            {
+                MessageBox.Show("Path: " + printVertexList(finalPath));
+            }
+            int speed = 0;
+            if (animate.Checked)
+            {
+                speed = 500;
+            }
+            traverseFinalPath(finalPath, speed, "#33CC33");
+            System.Threading.Thread.Sleep(2000);
+            traverseFinalPath(finalPath, 0, mainColor); //reset graph
+        }
+
+        public List<int> removeLongDetoursAStar(List<int> theList)
+        {
+            List<int> tempList = theList;
+
+            for (int x=0; x<tempList.Count-1; x++)
+            {
+                for (int y=x+1; y<tempList.Count; y++)
+                {
+                    //MessageBox.Show("Is " + (vertices[tempList[y]].indexNumber + 1) + " a neighbor of " + (vertices[tempList[x]].indexNumber + 1));
+                    if (checkIfListContains(vertices[tempList[x]].neighbors, vertices[tempList[y]].indexNumber))
+                    {
+                        //MessageBox.Show("Deleting in between " + x + " and " + y);
+                        //then delete the vertices in between
+                        for (int z=(x+1); z<y; z++)
+                        {
+                            tempList.RemoveAt(z);
+                            //MessageBox.Show("Removed detour at " + vertices[tempList[z]]);
+                        }
+                    }
+                }
+            }
+
+            return tempList;
+        }
+
+        public List<AStarVertex> sortListAStarVertex(List<AStarVertex> theList, int goalVertex)
+        {
+            List<AStarVertex> tempList = theList;
+            AStarVertex tempVertex;
+            int length1, length2;
+
+            for (int x=0; x < tempList.Count; x++)
+            {
+                for (int y=0; y<tempList.Count; y++)
+                {
+                    //aside from the total path cost, we will also add the
+                    //heuristic current vertex to goal length to the f(n)
+                    length1 = tempList[x].totalCost + calculateEdgeLength(
+                        vertices[tempList[x].indexNumber].mouseX,
+                        vertices[tempList[x].indexNumber].mouseY,
+                        vertices[goalVertex].mouseX,
+                        vertices[goalVertex].mouseY
+                    );
+                    length2 = tempList[y].totalCost + calculateEdgeLength(
+                        vertices[tempList[y].indexNumber].mouseX,
+                        vertices[tempList[y].indexNumber].mouseY,
+                        vertices[goalVertex].mouseX,
+                        vertices[goalVertex].mouseY
+                    );
+                    if (length2 < length1)
+                    {
+                        tempVertex = tempList[y];
+                        tempList[y] = tempList[x];
+                        tempList[x] = tempVertex;
+                    }
+                }
+            }
+
+            return tempList;
+        }
+
         public List<int> sortListOfVerticesToGoal(List<int> theList, int goalVertex)
         {
             List<int> sortedList = theList;
             int length1, length2;
             int tempVertex;
-            for (int x=0; x< sortedList.Count; x++)
+            for (int x=0; x<sortedList.Count; x++)
             {
-                for (int y=0; y< sortedList.Count; y++)
+                for (int y=0; y<sortedList.Count; y++)
                 {
-                    length1 = calculateEdgeLength(vertices[sortedList[x]].mouseX,
-                                                  vertices[sortedList[x]].mouseY,
-                                                  vertices[goalVertex].mouseX,
-                                                  vertices[goalVertex].mouseY);
-                    length2 = calculateEdgeLength(vertices[sortedList[y]].mouseX,
-                                                  vertices[sortedList[y]].mouseY,
-                                                  vertices[goalVertex].mouseX,
-                                                  vertices[goalVertex].mouseY);
+                    length1 = calculateEdgeLength(
+                        vertices[sortedList[x]].mouseX,
+                        vertices[sortedList[x]].mouseY,
+                        vertices[goalVertex].mouseX,
+                        vertices[goalVertex].mouseY
+                    );
+                    length2 = calculateEdgeLength(
+                        vertices[sortedList[y]].mouseX,
+                        vertices[sortedList[y]].mouseY,
+                        vertices[goalVertex].mouseX,
+                        vertices[goalVertex].mouseY
+                    );
                     if (length2 < length1)
                     {
                         tempVertex = sortedList[y];
@@ -656,6 +837,16 @@ namespace VertexAndEdges
             return tempString;
         }
 
+        public string printAStarVertexList(List<AStarVertex> tempList)
+        {
+            string tempString = "";
+            foreach (AStarVertex tempVertex in tempList)
+            {
+                tempString += "Vertex: " + (tempVertex.indexNumber + 1) + "\tParent: " + (tempVertex.parentVertex + 1) + "\tPath Length: " + tempVertex.totalCost + "\n";
+            }
+            return tempString;
+        }
+
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lastIndex = 0;
@@ -694,6 +885,27 @@ namespace VertexAndEdges
                 tempString += a.ToString() + " ";
             }
             return tempString;
+        }
+    }
+
+    public class AStarVertex
+    {
+        public int indexNumber;
+        public int totalCost;
+        public int parentVertex;
+
+        public AStarVertex(int indexNumber, int parentVertex, int totalCost)
+        {
+            this.indexNumber = indexNumber;
+            this.parentVertex = parentVertex;
+            this.totalCost = totalCost;
+        }
+
+        public AStarVertex(AStarVertex vertex)
+        {
+            this.indexNumber = vertex.indexNumber;
+            this.totalCost = vertex.totalCost;
+            this.parentVertex = vertex.parentVertex;
         }
     }
 }
