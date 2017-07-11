@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -165,7 +166,7 @@ namespace VertexAndEdges
                 }
                 else
                 {
-                    MessageBox.Show("That edge from " + fromVertex + " to " + toVertex + " already exists.");
+                    //MessageBox.Show("That edge from " + fromVertex + " to " + toVertex + " already exists.");
                     return false;
                 }
             }
@@ -770,6 +771,156 @@ namespace VertexAndEdges
             return sortedList;
         }
 
+        private void geneticAlgorithmToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int MaxGenerations = 25;
+            //complete the graph first
+            int fromVertex, toVertex;
+            MessageBox.Show("This will make the graph complete.");
+            for (int x=1; x<=lastIndex; x++)
+            {
+                for (int y=1; y<=lastIndex; y++)
+                {
+                    if (x != y)
+                    {
+                        fromVertex = x;
+                        toVertex = y;
+                        if (updateNeighbors(fromVertex, toVertex))
+                        {
+                            drawEdgeLineAndRelabel(
+                                (vertices[fromVertex - 1].indexNumber + 1).ToString(),
+                                (vertices[toVertex - 1].indexNumber + 1).ToString(),
+                                vertices[fromVertex - 1].mouseX,
+                                vertices[fromVertex - 1].mouseY,
+                                vertices[toVertex - 1].mouseX,
+                                vertices[toVertex - 1].mouseY,
+                                null
+                            );
+                        }
+                    }
+                }
+            }
+
+            //randomize the first four paths for generation 1
+            List<VerticesGeneticAlgorithm> listOfFamily = new List<VerticesGeneticAlgorithm>();
+            VerticesGeneticAlgorithm tempRand;
+            int[] tempPath = randomizeListForPath();
+            int[] emptyParent = new int[lastIndex];
+            tempRand = new VerticesGeneticAlgorithm(emptyParent, emptyParent, 0, calculateTotalLength(tempPath), tempPath);
+            listOfFamily.Add(tempRand);
+            tempPath = randomizeListForPath();
+            tempRand = new VerticesGeneticAlgorithm(emptyParent, emptyParent, 0, calculateTotalLength(tempPath), tempPath);
+            listOfFamily.Add(tempRand);
+            tempPath = randomizeListForPath();
+            tempRand = new VerticesGeneticAlgorithm(emptyParent, emptyParent, 0, calculateTotalLength(tempPath), tempPath);
+            listOfFamily.Add(tempRand);
+            tempPath = randomizeListForPath();
+            tempRand = new VerticesGeneticAlgorithm(emptyParent, emptyParent, 0, calculateTotalLength(tempPath), tempPath);
+            listOfFamily.Add(tempRand);
+
+            //sort the listOfFamily so that the first elements have the least cost
+            listOfFamily = sortAllFamily(listOfFamily);
+
+            int upToPosCopy; //from what position will we crossover
+            int[] temp1, temp2, temp3, parent1, parent2, parent3;
+            int tempPathToMove;
+            for (int x=1; x<MaxGenerations; x++)
+            {
+                //copy values of first three least cost
+                temp1 = listOfFamily[0].path;
+                parent1 = temp1;
+                temp2 = listOfFamily[1].path;
+                parent2 = temp2;
+                temp3 = listOfFamily[2].path;
+                parent3 = temp3;
+                //crossover of 1st and 2nd least cost
+                upToPosCopy = StaticRandom.Instance.Next(0, lastIndex/2); //we only crossover from pos 0 to max at the middle
+                for (int y=0; y<upToPosCopy; y++)
+                {
+                    tempPathToMove = temp1[y];
+                    temp1[y] = temp2[y];
+                    temp2[y] = tempPathToMove;
+                }
+                tempRand = new VerticesGeneticAlgorithm(parent1, parent2, x, calculateTotalLength(temp1), temp1);
+                listOfFamily.Add(tempRand);
+                tempRand = new VerticesGeneticAlgorithm(parent1, parent2, x, calculateTotalLength(temp2), temp2);
+                listOfFamily.Add(tempRand);
+                //crossover of 1st and 3rd least cost
+                upToPosCopy = StaticRandom.Instance.Next(0, lastIndex / 2); //we only crossover from pos 0 to max at the middle
+                for (int y = 0; y < upToPosCopy; y++)
+                {
+                    tempPathToMove = temp1[y];
+                    temp1[y] = temp3[y];
+                    temp3[y] = tempPathToMove;
+                }
+                tempRand = new VerticesGeneticAlgorithm(parent1, parent3, x, calculateTotalLength(temp3), temp3);
+                listOfFamily.Add(tempRand);
+                //sort the listOfFamily so that the first elements have the least cost
+                listOfFamily = sortAllFamily(listOfFamily);
+            }
+
+            string ts = "";
+            foreach(VerticesGeneticAlgorithm a in listOfFamily)
+            {
+                ts += a.ToString();
+            }
+            Prompt.ShowDialog(ts, "List of Family");
+        }
+
+        public List<VerticesGeneticAlgorithm> sortAllFamily(List<VerticesGeneticAlgorithm> tempFamily)
+        {
+            List<VerticesGeneticAlgorithm> resultSortedFamily = new List<VerticesGeneticAlgorithm>();
+            VerticesGeneticAlgorithm tempForTransfer;
+
+            for (int x=0; x<tempFamily.Count; x++)
+            {
+                for (int y=x; y<tempFamily.Count; y++)
+                {
+                    if (tempFamily[x].totalCost > tempFamily[y].totalCost)
+                    {
+                        tempForTransfer = tempFamily[x];
+                        tempFamily[x] = tempFamily[y];
+                        tempFamily[y] = tempForTransfer;
+                    }
+                }
+            }
+
+            return tempFamily;
+        }
+
+        public int calculateTotalLength(int[] tempPath)
+        {
+            int totalCost = 0;
+
+            for (int x=0; x<tempPath.Length-1; x++)
+            {
+                totalCost += calculateEdgeLength(vertices[tempPath[x]].mouseX, vertices[tempPath[x]].mouseY, vertices[tempPath[x+1]].mouseX, vertices[tempPath[x+1]].mouseY);
+            }
+
+            return totalCost;
+        }
+
+        public int[] randomizeListForPath()
+        {
+            int[] tempList = new int[lastIndex];
+            for (int x=0; x<tempList.Length; x++)
+            {
+                tempList[x] = -1;
+            }
+            int whereToPut;
+            for (int x=0; x<lastIndex; x++)
+            {
+                whereToPut = StaticRandom.Instance.Next(0, lastIndex);
+                while(tempList[whereToPut] != -1)
+                {
+                    whereToPut = StaticRandom.Instance.Next(0, lastIndex);
+                }
+                //MessageBox.Show("Put " + x + " to position " + whereToPut);
+                tempList[whereToPut] = x;
+            }
+            return tempList;
+        }
+
         public void traverseFinalPath(List<int> tempList, int speed, string customColor)
         {
             //MessageBox.Show("Path Received: " + printVertexList(tempList));
@@ -855,7 +1006,7 @@ namespace VertexAndEdges
             Brush whitePen = new SolidBrush(ColorTranslator.FromHtml("#FFFFFF"));
             g.FillRectangle(whitePen, 0, 0, mainPicBox.Width, mainPicBox.Height);
         }
-
+        
     }
 
     public class Vertex
@@ -906,6 +1057,87 @@ namespace VertexAndEdges
             this.indexNumber = vertex.indexNumber;
             this.totalCost = vertex.totalCost;
             this.parentVertex = vertex.parentVertex;
+        }
+    }
+
+    public class VerticesGeneticAlgorithm
+    {
+        public int[] parent1;
+        public int[] parent2;
+        public int generation;
+        public int totalCost;
+        public int[] path;
+        
+        public VerticesGeneticAlgorithm(int[] parent1, int[] parent2, int generation, int totalCost, int[] path)
+        {
+            this.parent1 = parent1;
+            this.parent2 = parent2;
+            this.generation = generation;
+            this.totalCost = totalCost;
+            this.path = path;
+        }
+
+        public override string ToString()
+        {
+            string tempString = "Generation: " + this.generation;
+            tempString += "\tParent: ";
+            for (int a = 0; a < parent1.Length; a++)
+            {
+                tempString += parent1[a] + " ";
+            }
+            tempString += " and ";
+            for (int a = 0; a < parent2.Length; a++)
+            {
+                tempString += parent2[a] + " ";
+            }
+            tempString += "\tTotal Cost: " + this.totalCost;
+            tempString += "\tPath: ";
+            for (int a=0; a<path.Length; a++)
+            {
+                tempString += path[a] + " ";
+            }
+            return tempString + "\n";
+        }
+    }
+
+    //from https://stackoverflow.com/questions/767999/random-number-generator-only-generating-one-random-number
+    public static class StaticRandom
+    {
+        private static int seed;
+        private static ThreadLocal<Random> threadLocal = new ThreadLocal<Random>
+            (() => new Random(Interlocked.Increment(ref seed)));
+
+        static StaticRandom()
+        {
+            seed = Environment.TickCount;
+        }
+
+        public static Random Instance { get { return threadLocal.Value; } }
+    }
+
+    //taken from https://stackoverflow.com/questions/5427020/prompt-dialog-in-windows-forms
+    public static class Prompt
+    {
+        public static string ShowDialog(string text, string caption)
+        {
+            Form prompt = new Form()
+            {
+                Width = 700,
+                Height = 500,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = caption,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            //Label textLabel = new Label() { Left = 50, Top = 20, Text = text, Width = 450 };
+            TextBox textBox1 = new TextBox();
+            textBox1.Multiline = true;
+            textBox1.Text = text.Replace("\n", "\r\n");
+            textBox1.Height = prompt.Height-20;
+            textBox1.Width = prompt.Width-10;
+            textBox1.ScrollBars = ScrollBars.Vertical;
+            prompt.Controls.Add(textBox1);
+            //prompt.Controls.Add(textLabel);
+            return prompt.ShowDialog() == DialogResult.OK ? "" : "";
         }
     }
 }

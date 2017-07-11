@@ -56,6 +56,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.startComboBox = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.geneticAlgorithmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicBox)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -140,7 +141,8 @@
             // 
             this.graphSearchToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aToolStripMenuItem,
-            this.greedyBFSToolStripMenuItem});
+            this.greedyBFSToolStripMenuItem,
+            this.geneticAlgorithmToolStripMenuItem});
             this.graphSearchToolStripMenuItem.Name = "graphSearchToolStripMenuItem";
             this.graphSearchToolStripMenuItem.Size = new System.Drawing.Size(89, 20);
             this.graphSearchToolStripMenuItem.Text = "Graph Search";
@@ -148,14 +150,14 @@
             // aToolStripMenuItem
             // 
             this.aToolStripMenuItem.Name = "aToolStripMenuItem";
-            this.aToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.aToolStripMenuItem.Text = "A*";
             this.aToolStripMenuItem.Click += new System.EventHandler(this.aToolStripMenuItem_Click);
             // 
             // greedyBFSToolStripMenuItem
             // 
             this.greedyBFSToolStripMenuItem.Name = "greedyBFSToolStripMenuItem";
-            this.greedyBFSToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.greedyBFSToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.greedyBFSToolStripMenuItem.Text = "Greedy BFS";
             this.greedyBFSToolStripMenuItem.Click += new System.EventHandler(this.greedyBFSToolStripMenuItem_Click);
             // 
@@ -315,6 +317,13 @@
             this.label3.TabIndex = 0;
             this.label3.Text = "Start:";
             // 
+            // geneticAlgorithmToolStripMenuItem
+            // 
+            this.geneticAlgorithmToolStripMenuItem.Name = "geneticAlgorithmToolStripMenuItem";
+            this.geneticAlgorithmToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.geneticAlgorithmToolStripMenuItem.Text = "Genetic Algorithm";
+            this.geneticAlgorithmToolStripMenuItem.Click += new System.EventHandler(this.geneticAlgorithmToolStripMenuItem_Click);
+            // 
             // VertexAndEdges
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -373,6 +382,7 @@
         private System.Windows.Forms.ToolStripMenuItem graphSearchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem greedyBFSToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem geneticAlgorithmToolStripMenuItem;
     }
 }
 
