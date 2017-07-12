@@ -773,7 +773,8 @@ namespace VertexAndEdges
 
         private void geneticAlgorithmToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int MaxGenerations = 25;
+            int MaxGenerations = 10;
+            string ts;
             //complete the graph first
             int fromVertex, toVertex;
             MessageBox.Show("This will make the graph complete.");
@@ -821,50 +822,126 @@ namespace VertexAndEdges
             //sort the listOfFamily so that the first elements have the least cost
             listOfFamily = sortAllFamily(listOfFamily);
 
-            int upToPosCopy; //from what position will we crossover
-            int[] temp1, temp2, temp3, parent1, parent2, parent3;
-            int tempPathToMove;
+            int[] temp1 = new int[lastIndex], temp2 = new int[lastIndex], temp3 = new int[lastIndex], temp4 = new int[lastIndex], parent1=new int[lastIndex], parent2 = new int[lastIndex], parent3 = new int[lastIndex], org1 = new int[lastIndex], org2 = new int[lastIndex], org3 = new int[lastIndex];
             for (int x=1; x<MaxGenerations; x++)
             {
                 //copy values of first three least cost
-                temp1 = listOfFamily[0].path;
-                parent1 = temp1;
-                temp2 = listOfFamily[1].path;
-                parent2 = temp2;
-                temp3 = listOfFamily[2].path;
-                parent3 = temp3;
-                //crossover of 1st and 2nd least cost
-                upToPosCopy = StaticRandom.Instance.Next(0, lastIndex/2); //we only crossover from pos 0 to max at the middle
-                for (int y=0; y<upToPosCopy; y++)
-                {
-                    tempPathToMove = temp1[y];
-                    temp1[y] = temp2[y];
-                    temp2[y] = tempPathToMove;
-                }
+                listOfFamily[0].path.CopyTo(parent1, 0);
+                listOfFamily[0].path.CopyTo(org1, 0);
+                listOfFamily[1].path.CopyTo(parent2, 0);
+                listOfFamily[1].path.CopyTo(org2, 0);
+                listOfFamily[2].path.CopyTo(parent3, 0);
+                listOfFamily[2].path.CopyTo(org3, 0);
+                temp1 = crossoverFixMutuate(org1, org2);
+                temp2 = crossoverFixMutuate(org2, org1);
+                temp3 = crossoverFixMutuate(org1, org3);
+                temp4 = crossoverFixMutuate(org3, org1);
+                //MessageBox.Show("Generation "+x+"\nTemp1: " + printArayOfVertices(temp1) + "with total cost of " + calculateTotalLength(temp1) + "\nTemp2: " + printArayOfVertices(temp2) + "with total cost of " + calculateTotalLength(temp2) + "\nTemp3: " + printArayOfVertices(temp3) + "with total cost of " + calculateTotalLength(temp3) + "\nTemp4: " + printArayOfVertices(temp4) + "with total cost of " + calculateTotalLength(temp4));
+                //MessageBox.Show("Temp1: "+printArayOfInt(temp1) + "\nTemp2: "+ printArayOfInt(temp1)+ "\nTemp3: "+ printArayOfInt(temp3)+ "\nTemp4: "+ printArayOfInt(temp4));
+
                 tempRand = new VerticesGeneticAlgorithm(parent1, parent2, x, calculateTotalLength(temp1), temp1);
                 listOfFamily.Add(tempRand);
                 tempRand = new VerticesGeneticAlgorithm(parent1, parent2, x, calculateTotalLength(temp2), temp2);
                 listOfFamily.Add(tempRand);
-                //crossover of 1st and 3rd least cost
-                upToPosCopy = StaticRandom.Instance.Next(0, lastIndex / 2); //we only crossover from pos 0 to max at the middle
-                for (int y = 0; y < upToPosCopy; y++)
-                {
-                    tempPathToMove = temp1[y];
-                    temp1[y] = temp3[y];
-                    temp3[y] = tempPathToMove;
-                }
                 tempRand = new VerticesGeneticAlgorithm(parent1, parent3, x, calculateTotalLength(temp3), temp3);
                 listOfFamily.Add(tempRand);
+                tempRand = new VerticesGeneticAlgorithm(parent1, parent3, x, calculateTotalLength(temp4), temp4);
+                listOfFamily.Add(tempRand);
+
                 //sort the listOfFamily so that the first elements have the least cost
                 listOfFamily = sortAllFamily(listOfFamily);
             }
+            
+            List<int> finalPath = new List<int>();
+            for (int x=0; x<listOfFamily[0].path.Length; x++)
+            {
+                finalPath.Add(listOfFamily[0].path[x]);
+            }
+            //check if showing of logs is enabled
+            if (showLog.Checked)
+            {
+                printListOfFamily(listOfFamily);
+            }
+            else
+            {
+                MessageBox.Show("Path: " + printVertexList(finalPath));
+            }
+            int speed = 0;
+            if (animate.Checked)
+            {
+                speed = 500;
+            }
+            traverseFinalPath(finalPath, speed, "#33CC33");
+            System.Threading.Thread.Sleep(2000);
+            traverseFinalPath(finalPath, 0, mainColor); //reset graph
+        }
 
+        public void printListOfFamily(List<VerticesGeneticAlgorithm> listOfFamily)
+        {
             string ts = "";
-            foreach(VerticesGeneticAlgorithm a in listOfFamily)
+            foreach (VerticesGeneticAlgorithm a in listOfFamily)
             {
                 ts += a.ToString();
             }
             Prompt.ShowDialog(ts, "List of Family");
+        }
+
+        public int[] crossoverFixMutuate(int[] path1, int[] path2)
+        {
+            int[] tempParent1 = new int[path1.Length], tempParent2 = new int[path2.Length];
+            path1.CopyTo(tempParent1, 0);
+            path2.CopyTo(tempParent2, 0);
+            int upToPos = StaticRandom.Instance.Next(0, path1.Length / 2), pos1, pos2;
+            int tempVertexToMove;
+
+            //crossover
+            for (int y = 0; y < upToPos; y++)
+            {
+                tempVertexToMove = tempParent1[y];
+                tempParent1[y] = tempParent2[y];
+                tempParent2[y] = tempVertexToMove;
+            }
+
+            //fix duplicates
+            for (int x=0; x< tempParent1.Length; x++)
+            {
+                if (checkOccurencesInArray(tempParent1, tempParent1[x]) > 1) //if this vertex exists more than one in the path after crossover, we fix
+                {
+                    for (int y=0; y<tempParent1.Length; y++)
+                    {
+                        if (checkOccurencesInArray(tempParent1, y) == 0)
+                        {
+                            tempParent1[x] = y;
+                            y = tempParent1.Length;
+                        }
+                    }
+                }
+            }
+
+            //mutuate
+            pos1 = StaticRandom.Instance.Next(0, path1.Length);
+            pos2 = StaticRandom.Instance.Next(0, path1.Length);
+            tempVertexToMove = tempParent1[pos1];
+            tempParent1[pos1] = tempParent1[pos2];
+            tempParent1[pos2] = tempVertexToMove;
+            //MessageBox.Show("Switch "+pos1+" to " + pos2);
+
+            return tempParent1;
+        }
+
+        public int checkOccurencesInArray(int[] a, int key)
+        {
+            int totalNum = 0;
+
+            for (int x=0; x<a.Length; x++)
+            {
+                if (a[x] == key)
+                {
+                    totalNum++;
+                }
+            }
+
+            return totalNum;
         }
 
         public List<VerticesGeneticAlgorithm> sortAllFamily(List<VerticesGeneticAlgorithm> tempFamily)
@@ -891,11 +968,16 @@ namespace VertexAndEdges
         public int calculateTotalLength(int[] tempPath)
         {
             int totalCost = 0;
+            string tempStr = "Path ";
 
             for (int x=0; x<tempPath.Length-1; x++)
             {
+                tempStr += (tempPath[x]+1) + " ";
                 totalCost += calculateEdgeLength(vertices[tempPath[x]].mouseX, vertices[tempPath[x]].mouseY, vertices[tempPath[x+1]].mouseX, vertices[tempPath[x+1]].mouseY);
             }
+            tempStr += (tempPath[tempPath.Length-1]+1) + " ";
+            tempStr += "is " + totalCost;
+            //MessageBox.Show(tempStr);
 
             return totalCost;
         }
@@ -998,6 +1080,16 @@ namespace VertexAndEdges
             return tempString;
         }
 
+        public string printArayOfVertices(int[] tempList)
+        {
+            string tempString = "";
+            for (int x=0; x<tempList.Length; x++)
+            {
+                tempString += (tempList[x]+1) + " ";
+            }
+            return tempString;
+        }
+
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lastIndex = 0;
@@ -1083,18 +1175,18 @@ namespace VertexAndEdges
             tempString += "\tParent: ";
             for (int a = 0; a < parent1.Length; a++)
             {
-                tempString += parent1[a] + " ";
+                tempString += (parent1[a]+1) + " ";
             }
             tempString += " and ";
             for (int a = 0; a < parent2.Length; a++)
             {
-                tempString += parent2[a] + " ";
+                tempString += (parent2[a]+1) + " ";
             }
             tempString += "\tTotal Cost: " + this.totalCost;
             tempString += "\tPath: ";
             for (int a=0; a<path.Length; a++)
             {
-                tempString += path[a] + " ";
+                tempString += (path[a]+1) + " ";
             }
             return tempString + "\n";
         }
