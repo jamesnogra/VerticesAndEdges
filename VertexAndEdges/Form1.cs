@@ -564,6 +564,11 @@ namespace VertexAndEdges
 
         private void aToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!checkIfTheresPathBetweenStartEnd())
+            {
+                MessageBox.Show("There's no path between start and end!");
+                return;
+            }
             int startVertex = 1, endVertex = 1;
             if (!Int32.TryParse(startComboBox.Text, out startVertex) || !Int32.TryParse(endComboBox.Text, out endVertex))
             {
@@ -737,6 +742,60 @@ namespace VertexAndEdges
             }
 
             return tempList;
+        }
+
+        public bool checkIfTheresPathBetweenStartEnd()
+        {
+            int startVertex = 1, endVertex = 1;
+            if (!Int32.TryParse(startComboBox.Text, out startVertex) || !Int32.TryParse(endComboBox.Text, out endVertex))
+            {
+                MessageBox.Show("Invalid vertex selected.");
+                return false;
+            }
+            startVertex--;
+            endVertex--;
+
+            List<int> finalPath = new List<int>();
+            List<int> vertexPushed = new List<int>();
+            bool isDone = false;
+            int atVertex;
+            vertexPushed.Add(startVertex);
+            while (!isDone)
+            {
+                atVertex = vertexPushed.ElementAt(vertexPushed.Count - 1);
+                if (!checkIfListContains(finalPath, atVertex))
+                {
+                    finalPath.Add(atVertex);
+                }
+                vertexPushed.Remove(vertexPushed.Last());
+                if (atVertex == endVertex)
+                {
+                    isDone = true;
+                    break;
+                }
+                foreach (int vertex in vertices[atVertex].neighbors)
+                {
+                    if (!checkIfListContains(vertexPushed, vertex) && !checkIfListContains(finalPath, vertex))
+                    {
+                        vertexPushed.Add(vertex);
+                    }
+                }
+                vertexPushed = sortListOfVerticesToGoal(vertexPushed, endVertex);
+                if (vertexPushed.Count == 0)
+                {
+                    isDone = true;
+                }
+            }
+
+            //let's check if we found the goal
+            if (checkIfListContains(finalPath, endVertex))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public List<int> sortListOfVerticesToGoal(List<int> theList, int goalVertex)
