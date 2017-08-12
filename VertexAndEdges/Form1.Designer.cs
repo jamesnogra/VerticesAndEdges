@@ -40,6 +40,7 @@
             this.graphSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.greedyBFSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.geneticAlgorithmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainPicBox = new System.Windows.Forms.PictureBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.connectVertexButton = new System.Windows.Forms.Button();
@@ -56,7 +57,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.startComboBox = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.geneticAlgorithmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showNagaMap = new System.Windows.Forms.Button();
+            this.showNagaVerticesButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainPicBox)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -89,28 +91,28 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "Save Graph";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // openGraphToolStripMenuItem
             // 
             this.openGraphToolStripMenuItem.Name = "openGraphToolStripMenuItem";
-            this.openGraphToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.openGraphToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openGraphToolStripMenuItem.Text = "Open Graph";
             this.openGraphToolStripMenuItem.Click += new System.EventHandler(this.openGraphToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -160,6 +162,13 @@
             this.greedyBFSToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.greedyBFSToolStripMenuItem.Text = "Greedy BFS";
             this.greedyBFSToolStripMenuItem.Click += new System.EventHandler(this.greedyBFSToolStripMenuItem_Click);
+            // 
+            // geneticAlgorithmToolStripMenuItem
+            // 
+            this.geneticAlgorithmToolStripMenuItem.Name = "geneticAlgorithmToolStripMenuItem";
+            this.geneticAlgorithmToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.geneticAlgorithmToolStripMenuItem.Text = "Genetic Algorithm";
+            this.geneticAlgorithmToolStripMenuItem.Click += new System.EventHandler(this.geneticAlgorithmToolStripMenuItem_Click);
             // 
             // mainPicBox
             // 
@@ -317,18 +326,33 @@
             this.label3.TabIndex = 0;
             this.label3.Text = "Start:";
             // 
-            // geneticAlgorithmToolStripMenuItem
+            // showNagaMap
             // 
-            this.geneticAlgorithmToolStripMenuItem.Name = "geneticAlgorithmToolStripMenuItem";
-            this.geneticAlgorithmToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
-            this.geneticAlgorithmToolStripMenuItem.Text = "Genetic Algorithm";
-            this.geneticAlgorithmToolStripMenuItem.Click += new System.EventHandler(this.geneticAlgorithmToolStripMenuItem_Click);
+            this.showNagaMap.Location = new System.Drawing.Point(708, 598);
+            this.showNagaMap.Name = "showNagaMap";
+            this.showNagaMap.Size = new System.Drawing.Size(164, 23);
+            this.showNagaMap.TabIndex = 5;
+            this.showNagaMap.Text = "Show Naga Map";
+            this.showNagaMap.UseVisualStyleBackColor = true;
+            this.showNagaMap.Click += new System.EventHandler(this.showNagaMap_Click);
+            // 
+            // showNagaVerticesButton
+            // 
+            this.showNagaVerticesButton.Location = new System.Drawing.Point(708, 625);
+            this.showNagaVerticesButton.Name = "showNagaVerticesButton";
+            this.showNagaVerticesButton.Size = new System.Drawing.Size(164, 23);
+            this.showNagaVerticesButton.TabIndex = 6;
+            this.showNagaVerticesButton.Text = "Show Naga Vertices";
+            this.showNagaVerticesButton.UseVisualStyleBackColor = true;
+            this.showNagaVerticesButton.Click += new System.EventHandler(this.showNagaVerticesButton_Click);
             // 
             // VertexAndEdges
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 661);
+            this.Controls.Add(this.showNagaVerticesButton);
+            this.Controls.Add(this.showNagaMap);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.showAdjacencyMatrixButton);
             this.Controls.Add(this.groupBox1);
@@ -383,6 +407,8 @@
         private System.Windows.Forms.ToolStripMenuItem aToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem greedyBFSToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem geneticAlgorithmToolStripMenuItem;
+        private System.Windows.Forms.Button showNagaMap;
+        private System.Windows.Forms.Button showNagaVerticesButton;
     }
 }
 

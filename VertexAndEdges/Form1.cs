@@ -264,14 +264,14 @@ namespace VertexAndEdges
                 try
                 {
                     readText = File.ReadAllText(filePath);
-                    insertAllVerticesAndEdges(readText);
+                    insertAllVerticesAndEdges(readText, true);
                 }
                 catch (IOException) { }
             }
             //MessageBox.Show(readText);
         }
 
-        private void insertAllVerticesAndEdges(string tempString)
+        private void insertAllVerticesAndEdges(string tempString, bool clearAll)
         {
             lastIndex = 0; //reset the index before reinserting all vertices and edges
             string[] verticesLine = tempString.Split('\n');
@@ -297,10 +297,13 @@ namespace VertexAndEdges
             }
 
             //clear the picturebox
-            Bitmap bmp = new Bitmap(mainPicBox.Width, mainPicBox.Height);
-            Graphics g = mainPicBox.CreateGraphics();
-            Brush whitePen = new SolidBrush(ColorTranslator.FromHtml("#FFFFFF"));
-            g.FillRectangle(whitePen, 0, 0, mainPicBox.Width, mainPicBox.Height);
+            if (clearAll)
+            {
+                Bitmap bmp = new Bitmap(mainPicBox.Width, mainPicBox.Height);
+                Graphics g = mainPicBox.CreateGraphics();
+                Brush whitePen = new SolidBrush(ColorTranslator.FromHtml("#FFFFFF"));
+                g.FillRectangle(whitePen, 0, 0, mainPicBox.Width, mainPicBox.Height);
+            }
             //then lets draw the vertices and edges
             for (int x = 0; x < lastIndex; x++)
             {
@@ -1157,7 +1160,17 @@ namespace VertexAndEdges
             Brush whitePen = new SolidBrush(ColorTranslator.FromHtml("#FFFFFF"));
             g.FillRectangle(whitePen, 0, 0, mainPicBox.Width, mainPicBox.Height);
         }
-        
+
+        private void showNagaMap_Click(object sender, EventArgs e)
+        {
+            mainPicBox.Image = Image.FromFile(@"Naga.bmp");
+        }
+
+        private void showNagaVerticesButton_Click(object sender, EventArgs e)
+        {
+            string readText = File.ReadAllText(@"NagaCityNew.txt");
+            insertAllVerticesAndEdges(readText, false);
+        }
     }
 
     public class Vertex

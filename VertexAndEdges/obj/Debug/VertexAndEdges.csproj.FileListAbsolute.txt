@@ -16,3 +16,5 @@ C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\obj\Debug\VertexAndEd
 C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.csproj.GenerateResource.Cache
 C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.exe
 C:\Users\WebDevOJT\Desktop\VerticesAndEdges\VertexAndEdges\obj\Debug\VertexAndEdges.pdb
+C:\Users\James\Documents\Visual Studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\bin\Debug\Naga.bmp
+C:\Users\James\Documents\Visual Studio 2017\VertexAndEdges\VertexAndEdges\VertexAndEdges\bin\Debug\NagaCityNew.txt
