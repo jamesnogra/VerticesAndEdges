@@ -94,6 +94,14 @@ namespace VertexAndEdges
             }
         }
 
+        public void drawVertexAndLabelAStar(string label, int posX, int posY)
+        {
+            System.Threading.Thread.Sleep(250);
+            Random random = new Random();
+            Color tempColor = Color.FromArgb((byte)random.Next(0, 255), (byte)random.Next(0, 255), (byte)random.Next(0, 255));
+            drawVertexAndLabel(label, posX, posY, ("#" + tempColor.R.ToString("X2") + tempColor.G.ToString("X2") + tempColor.B.ToString("X2")));
+        }
+
         public void drawVertexAndLabel(string label, int posX, int posY, string customColor)
         {
             string vertexColor = mainColor;
@@ -589,6 +597,7 @@ namespace VertexAndEdges
             bool isDone = false;
 
             aStar.Add(new AStarVertex(startVertex, -1, 0)); //add the start vertex
+            drawVertexAndLabelAStar((startVertex + 1).ToString(), vertices[startVertex].mouseX, vertices[startVertex].mouseY);
 
             while (!isDone)
             {
@@ -615,6 +624,9 @@ namespace VertexAndEdges
                         vertices[tempVertex.indexNumber].mouseY
                     );
                     aStar.Add(new AStarVertex(vertex, tempVertex.indexNumber, tempTotalCost + tempVertex.totalCost));
+
+                    //color the vertex with random color while they are being pushed
+                    drawVertexAndLabelAStar((vertex + 1).ToString(), vertices[vertex].mouseX, vertices[vertex].mouseY);
                 }
 
                 //sort the list of vertices after adding
